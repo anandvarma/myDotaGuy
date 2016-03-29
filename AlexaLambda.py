@@ -107,7 +107,9 @@ def get_counter_hero(intent, session):
 
     hero_lst = ['Razor', 'Rubick', 'Phantom Lancer', 'Legion Commander', 'Brewmaster', 'Outworld Devourer', 'Sniper', 'Lina', 'Sven', 'Visage', 'Undying', 'Tiny', 'Tidehunter', 'Puck', 'Ursa', 'Magnus', 'Earthshaker', 'Windrunner', 'Techies', 'Crystal Maiden', 'Batrider', 'Riki', 'Invoker', 'Venomancer', 'Timbersaw', 'Wraithking', 'Anti Mage', 'Ancient Apparition', 'Troll Warlord', 'Lich', 'Enchantress', 'Bristleback', 'Pudge', 'Faceless Void', 'Tinker', 'Mirana', 'Bounty Hunter', 'Treant Protector', 'Gyrocopter', 'Slardar', 'Lifestealer', 'Jakiro', 'Terrorblade', 'Dazzle', 'Chaos Kinght', 'Abaddon', 'Shadow Demon', 'Axe', 'Zeus', 'Alchemist', 'Elder Titan', 'Pugna', 'Vengeful Spirit', 'Broodmother', 'Sand King', 'Lion', 'Witch Doctor', 'Ember Spirit', 'Clockwerk', 'Phantom Assassin', 'Warlock', 'Chen', 'Keeper of the Light', 'Beastmaster', 'Centaur Warruner', 'Naga Siren', 'Kunkka', 'Phoenix', 'Silencer', 'Morphling', 'Slark', 'Meepo', 'Shadow Shaman', 'Templar Assassin', 'Juggernaut', 'Natures Prophet', 'Necrolyte', 'Earth Spirit', 'Doom', 'Shadow Fiend', 'Omniknight', 'Skywrath Mage', 'Weaver', 'Wisp', 'Medusa', 'Nightstalker', 'Ogre Magi', 'Tusk', 'Spectre', 'Nyx Assassin', 'Drow Ranger', 'Clinkz', 'Disruptor', 'Bane', 'Enigma', 'Dragon Knight', 'Viper', 'Queen of Pain', 'Luna', 'Huskar', 'Death Prophet', 'Storm Spirit', 'Spirit Breaker', 'Dark Seer', 'Bloodseeker', 'Lone Druid', 'Lycan', 'Leshrac']
 
-    speech_output = "Why dont you play " + random.choice(hero_lst)
+    opponent = intent["slots"]["Hero"]["value"]
+
+    speech_output = random.choice(hero_lst) + " should be a good pick against " + opponent
     should_end_session = False
 
     return build_response(session_attributes, build_speechlet_response(
@@ -140,9 +142,9 @@ def get_steam_status(intent, session):
     #print (json.dumps(data, indent=4, sort_keys=True))
 
     if data['result']["isSteamRip"]:
-        speech_output = "Oh my God! Steam is down bro!"
+        speech_output = "Oh my God! Steam Servers are Down!"
     else:
-        speech_output = "Steam is all cool bro!"
+        speech_output = "Steam Servers are up. All Systems Go!"
 
     should_end_session = False
 
