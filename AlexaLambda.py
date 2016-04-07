@@ -69,6 +69,8 @@ def on_intent(intent_request, session):
         return get_random_hero(intent, session)
     elif intent_name == "serverStatus":
         return get_steam_status(intent, session)
+    elif intent_name == "AMAZON.HelpIntent":
+        return get_welcome_response()
     else:
         raise ValueError("Invalid intent")
 
@@ -88,13 +90,16 @@ def get_welcome_response():
 
     session_attributes = {}
     card_title = "Welcome"
-    speech_output = "Your Dota Guy at your service. \n" \
-                    "Trouble connecting? Check if Steam is doing fine:  " \
-                    "how are the steam servers doing"
+    speech_output = "Your very own Dota Guy is at your service. \n" \
+                    "Wondering what Hero to play today?\n" \
+                    "Wondering who would be a good counter pick against the current opponents?\n" \
+                    "Facing connection issues and you wanna know if the Steam servers are up?\n" \
+                    "He's got you covered! Just ask away.\n"
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
-    reprompt_text = "I can even help you pick heroes and counter-picks." \
-                    "pick me a hero to counter Axe!"
+    reprompt_text = "ask my dota guy how the steam servers are doing\n" \
+                    "ask my dota guy to pick me a hero to counter Axe!\n" \
+                    "ask my dota guy to pick a random hero\n"
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -107,10 +112,14 @@ def get_counter_hero(intent, session):
 
     hero_lst = ['Razor', 'Rubick', 'Phantom Lancer', 'Legion Commander', 'Brewmaster', 'Outworld Devourer', 'Sniper', 'Lina', 'Sven', 'Visage', 'Undying', 'Tiny', 'Tidehunter', 'Puck', 'Ursa', 'Magnus', 'Earthshaker', 'Windrunner', 'Techies', 'Crystal Maiden', 'Batrider', 'Riki', 'Invoker', 'Venomancer', 'Timbersaw', 'Wraithking', 'Anti Mage', 'Ancient Apparition', 'Troll Warlord', 'Lich', 'Enchantress', 'Bristleback', 'Pudge', 'Faceless Void', 'Tinker', 'Mirana', 'Bounty Hunter', 'Treant Protector', 'Gyrocopter', 'Slardar', 'Lifestealer', 'Jakiro', 'Terrorblade', 'Dazzle', 'Chaos Kinght', 'Abaddon', 'Shadow Demon', 'Axe', 'Zeus', 'Alchemist', 'Elder Titan', 'Pugna', 'Vengeful Spirit', 'Broodmother', 'Sand King', 'Lion', 'Witch Doctor', 'Ember Spirit', 'Clockwerk', 'Phantom Assassin', 'Warlock', 'Chen', 'Keeper of the Light', 'Beastmaster', 'Centaur Warruner', 'Naga Siren', 'Kunkka', 'Phoenix', 'Silencer', 'Morphling', 'Slark', 'Meepo', 'Shadow Shaman', 'Templar Assassin', 'Juggernaut', 'Natures Prophet', 'Necrolyte', 'Earth Spirit', 'Doom', 'Shadow Fiend', 'Omniknight', 'Skywrath Mage', 'Weaver', 'Wisp', 'Medusa', 'Nightstalker', 'Ogre Magi', 'Tusk', 'Spectre', 'Nyx Assassin', 'Drow Ranger', 'Clinkz', 'Disruptor', 'Bane', 'Enigma', 'Dragon Knight', 'Viper', 'Queen of Pain', 'Luna', 'Huskar', 'Death Prophet', 'Storm Spirit', 'Spirit Breaker', 'Dark Seer', 'Bloodseeker', 'Lone Druid', 'Lycan', 'Leshrac']
 
-    opponent = intent["slots"]["Hero"]["value"]
+    try:
+        opponent = intent["slots"]["Hero"]["value"]
+    except KeyError:
+        opponent = ""   # Handle error case
+        print ("User gave a Wrong Hero name")
 
     speech_output = random.choice(hero_lst) + " should be a good pick against " + opponent
-    should_end_session = False
+    should_end_session = True
 
     return build_response(session_attributes, build_speechlet_response(
         intent['name'], speech_output, reprompt_text, should_end_session))
@@ -123,8 +132,8 @@ def get_random_hero(intent, session):
 
     hero_lst = ['Razor', 'Rubick', 'Phantom Lancer', 'Legion Commander', 'Brewmaster', 'Outworld Devourer', 'Sniper', 'Lina', 'Sven', 'Visage', 'Undying', 'Tiny', 'Tidehunter', 'Puck', 'Ursa', 'Magnus', 'Earthshaker', 'Windrunner', 'Techies', 'Crystal Maiden', 'Batrider', 'Riki', 'Invoker', 'Venomancer', 'Timbersaw', 'Wraithking', 'Anti Mage', 'Ancient Apparition', 'Troll Warlord', 'Lich', 'Enchantress', 'Bristleback', 'Pudge', 'Faceless Void', 'Tinker', 'Mirana', 'Bounty Hunter', 'Treant Protector', 'Gyrocopter', 'Slardar', 'Lifestealer', 'Jakiro', 'Terrorblade', 'Dazzle', 'Chaos Kinght', 'Abaddon', 'Shadow Demon', 'Axe', 'Zeus', 'Alchemist', 'Elder Titan', 'Pugna', 'Vengeful Spirit', 'Broodmother', 'Sand King', 'Lion', 'Witch Doctor', 'Ember Spirit', 'Clockwerk', 'Phantom Assassin', 'Warlock', 'Chen', 'Keeper of the Light', 'Beastmaster', 'Centaur Warruner', 'Naga Siren', 'Kunkka', 'Phoenix', 'Silencer', 'Morphling', 'Slark', 'Meepo', 'Shadow Shaman', 'Templar Assassin', 'Juggernaut', 'Natures Prophet', 'Necrolyte', 'Earth Spirit', 'Doom', 'Shadow Fiend', 'Omniknight', 'Skywrath Mage', 'Weaver', 'Wisp', 'Medusa', 'Nightstalker', 'Ogre Magi', 'Tusk', 'Spectre', 'Nyx Assassin', 'Drow Ranger', 'Clinkz', 'Disruptor', 'Bane', 'Enigma', 'Dragon Knight', 'Viper', 'Queen of Pain', 'Luna', 'Huskar', 'Death Prophet', 'Storm Spirit', 'Spirit Breaker', 'Dark Seer', 'Bloodseeker', 'Lone Druid', 'Lycan', 'Leshrac']
 
-    speech_output = "Why dont you play " + random.choice(hero_lst)
-    should_end_session = False
+    speech_output = "Why don't you play " + random.choice(hero_lst)
+    should_end_session = True
 
     return build_response(session_attributes, build_speechlet_response(
         intent['name'], speech_output, reprompt_text, should_end_session))
@@ -146,7 +155,7 @@ def get_steam_status(intent, session):
     else:
         speech_output = "Steam Servers are up. All Systems Go!"
 
-    should_end_session = False
+    should_end_session = True
 
     return build_response(session_attributes, build_speechlet_response(
         intent['name'], speech_output, reprompt_text, should_end_session))
@@ -164,10 +173,10 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
         },
         'card': {
             'type': 'Simple',
-            'title': 'SessionSpeechlet - ' + title,
-            'content': 'SessionSpeechlet - ' + output
+            'title': title,     # Enhance card output
+            'content': output
         },
-        'reprompt': {
+        'reprompt': {   # TODO
             'outputSpeech': {
                 'type': 'PlainText',
                 'text': reprompt_text
